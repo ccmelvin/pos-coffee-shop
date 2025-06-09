@@ -1,0 +1,25 @@
+INFRASTRUCTURE DIAGRAM - POS COFFEE SHOP
+
+┌─────────────────────┐
+│     Middleware      │
+│  (Auth Protection)  │
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐         ┌─────────────────┐
+│  Next.js Application│───────→ │  Static Assets  │
+│(Vercel::Application)│         │ (Images & Media)│
+└─────────┬───────────┘         └─────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│     API Routes      │
+│(Next.js Endpoints)  │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+┌─────────┐  ┌─────────────────┐
+│ Supabase│  │    Supabase     │
+│   Auth  │  │    Database     │
+└─────────┘  └─────────────────┘
