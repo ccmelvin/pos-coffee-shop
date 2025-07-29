@@ -27,19 +27,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const setData = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error(error)
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error(error)
+          setIsLoading(false)
+          return
+        }
+        
+        setSession(data.session)
+        setUser(data.session?.user ?? null)
         setIsLoading(false)
-        return
+      } catch (err) {
+        console.error(err)
+        setIsLoading(false)
       }
-      
-      setSession(session)
-      setUser(session?.user ?? null)
-      setIsLoading(false)
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Set up auth state change listener
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       setIsLoading(false)
@@ -48,13 +54,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setData()
 
     return () => {
-      subscription.unsubscribe()
+      data.subscription.unsubscribe()
     }
   }, [])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/auth/login')
+    try {
+      await supabase.auth.signOut()
+      router.push('/auth/login')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
