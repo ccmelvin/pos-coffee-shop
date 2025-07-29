@@ -1,0 +1,22 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "Supabase Authentication" [ label = "Supabase Authentication
+(Supabase::Auth::Service)", shape =rectangle ];
+  "Supabase Database" [ label = "Supabase Database
+(Supabase::Database::Service)", shape =cylinder, fillcolor = "#FFCFB3" ];
+  "Next.js Application" [ label = "Next.js Application
+(Vercel::Next::Application)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "API Routes" [ label = "API Routes
+(Next.js API Endpoints)", shape =rectangle, fillcolor = "#D4F0C4" ];
+  "Static Assets" [ label = "Static Assets
+(Images & Media)", shape =folder, fillcolor = "#FFF2B3" ];
+  "Middleware" [ label = "Middleware
+(Auth Protection)", shape =rectangle, style = "filled,dashed,rounded", fillcolor = "#E6CCE6" ];
+  
+  "Next.js Application" -> "Supabase Authentication";
+  "Next.js Application" -> "Supabase Database";
+  "Next.js Application" -> "API Routes";
+  "API Routes" -> "Supabase Database";
+  "Middleware" -> "Next.js Application" [style=dashed];
+  "Next.js Application" -> "Static Assets";
+}
