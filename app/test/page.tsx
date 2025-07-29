@@ -7,7 +7,7 @@ export default async function TestPage() {
   const { data: products, error } = await supabase.from('products').select('*').limit(5)
   
   // Test auth session
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
   
   return (
     <div className="p-8">
@@ -28,7 +28,7 @@ export default async function TestPage() {
                 <p>Found {products.length} products:</p>
                 <ul className="mt-2 list-disc pl-5">
                   {products.map(product => (
-                    <li key={product.id}>{product.name} - ${product.price}</li>
+                    <li key={`${product.id}-${product.name}`}>{product.name} - ${product.price}</li>
                   ))}
                 </ul>
               </div>
