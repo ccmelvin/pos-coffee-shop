@@ -11,40 +11,35 @@ interface OrderData {
 }
 
 export async function saveOrder(orderData: OrderData) {
-  // First, create the order record
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
+  // Use RPC for atomic transaction
+  const { data: order, error } = await supabase.rpc('create_order_with_items', {
+    order_data: {
       subtotal: orderData.subtotal,
       tax: orderData.tax,
       total: orderData.total,
       payment_method: orderData.payment_method,
       customer_id: orderData.customer_id || null,
       status: 'completed'
-    })
-    .select()
-    .single()
+    },
+    items_data: orderData.items.map(item => ({
+      product_id: item.id,
+      quantity: item.quantity,
+      price: item.price
+    }))
+  })
   
-  if (orderError) {
-    console.error('Error creating order:', orderError)
-    throw new Error('Failed to create order')
-  }
-  
-  // Then, create order items
-  const orderItems = orderData.items.map(item => ({
-    order_id: order.id,
-    product_id: item.id,
-    quantity: item.quantity,
-    price: item.price
-  }))
-  
-  const { error: itemsError } = await supabase
-    .from('order_items')
-    .insert(orderItems)
-  
-  if (itemsError) {
-    console.error('Error creating order items:', itemsError)
-    throw new Error('Failed to create order items')
+  if (error) {
+    console.error('Error creating order:', error)
+    
+    // Provide user-friendly error messages
+    if (error.message.includes('insufficient_stock')) {
+      throw new Error('Some items are out of stock. Please refresh and try again.')
+    }
+    if (error.message.includes('payment_failed')) {
+      throw new Error('Payment processing failed. Please try a different payment method.')
+    }
+    
+    throw new Error('Unable to complete your order. Please try again or contact support.')
   }
   
   return order

@@ -1,31 +1,31 @@
 # Supabase and Database Rules
 
 ## Database Access
-- Always use typed queries with the database types
-- Use server components for initial data fetching when possible
-- Use client-side fetching only for dynamic updates
-- Handle loading and error states for all data fetching operations
+- Typed queries with the database types MUST be used
+- Server components SHOULD be used for initial data fetching when possible
+- Client-side fetching SHOULD only be used for dynamic updates
+- Loading and error states MUST be handled for all data fetching operations
 
 ## Authentication
-- Use Supabase Auth for all authentication needs
-- Always check user authentication status before accessing protected resources
-- Implement proper role-based access control in database rules
-- Never expose sensitive user information in client-side code
+- Supabase Auth MUST be used for all authentication needs
+- User authentication status MUST be checked before accessing protected resources
+- Proper role-based access control MUST be implemented in database rules
+- Sensitive user information MUST NOT be exposed in client-side code
 
 ## Data Modeling
-- Follow the established schema in `database.types.ts`
-- Keep database types up-to-date with actual database schema
-- Use UUIDs for primary keys
-- Include created_at and updated_at timestamps for all tables
+- The established schema in `database.types.ts` MUST be followed
+- Database types MUST be kept up-to-date with actual database schema
+- UUIDs MUST be used for primary keys
+- created_at and updated_at timestamps SHOULD be included for all tables
 
 ## Error Handling
-- Always handle potential errors in database operations
-- Provide meaningful error messages to users
-- Log detailed errors for debugging purposes
-- Implement retry mechanisms for transient failures
+- Potential errors in database operations MUST be handled
+- Meaningful error messages MUST be provided to users
+- Detailed errors SHOULD be logged for debugging purposes
+- Retry mechanisms SHOULD be implemented for transient failures
 
 ## Environment Variables
-- Never hardcode Supabase credentials
-- Use environment variables for all configuration
-- Include proper validation for required environment variables
-- Keep sensitive environment variables in .env.local (not committed to git)
+- Supabase credentials MUST NOT be hardcoded
+- Environment variables MUST be used for all configuration
+- Proper validation for required environment variables MUST be included
+- Sensitive environment variables MUST be kept in .env.local (not committed to git)

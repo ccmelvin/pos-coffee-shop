@@ -1,32 +1,32 @@
 # UI Component Rules
 
 ## Component Design
-- Follow the established design system
-- Use the UI components from the components/ui directory
-- Maintain consistent spacing, typography, and color usage
-- Ensure all components are responsive
+- The established design system MUST be followed
+- UI components from the components/ui directory MUST be used
+- Consistent spacing, typography, and color usage MUST be maintained
+- All components MUST be responsive
 
 ## Accessibility
-- Ensure all interactive elements are keyboard accessible
-- Use semantic HTML elements
-- Include proper ARIA attributes when needed
-- Maintain sufficient color contrast
-- Test with screen readers
+- All interactive elements MUST be keyboard accessible
+- Semantic HTML elements MUST be used
+- Proper ARIA attributes MUST be included when needed
+- Sufficient color contrast MUST be maintained
+- Components SHOULD be tested with screen readers
 
 ## State Management
-- Use local state for component-specific state
-- Use context for shared state across components
-- Keep state as close as possible to where it's used
-- Avoid prop drilling by using context or composition
+- Local state SHOULD be used for component-specific state
+- Context SHOULD be used for shared state across components
+- State SHOULD be kept as close as possible to where it's used
+- Prop drilling SHOULD be avoided by using context or composition
 
 ## Performance
-- Memoize expensive calculations with useMemo
-- Optimize re-renders with React.memo and useCallback
-- Lazy load components that aren't needed immediately
-- Use proper keys for lists to optimize rendering
+- Expensive calculations SHOULD be memoized with useMemo
+- Re-renders SHOULD be optimized with React.memo and useCallback
+- Components that aren't needed immediately SHOULD be lazy loaded
+- Proper keys for lists MUST be used to optimize rendering
 
 ## Responsive Design
-- Design mobile-first
-- Use relative units (rem, em) instead of pixels when appropriate
-- Test on multiple screen sizes
-- Use media queries or responsive utilities from Tailwind
+- Mobile-first design MUST be implemented
+- Relative units (rem, em) SHOULD be used instead of pixels when appropriate
+- Multiple screen sizes MUST be tested
+- Media queries or responsive utilities from Tailwind SHOULD be used

@@ -11,9 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ErrorBoundary } from '@/components/error-boundary'
 import Link from 'next/link'
 
-export default function UserProfile() {
+function UserProfileContent() {
   const { user, signOut, isLoading } = useAuth()
   
   if (isLoading) {
@@ -36,6 +37,16 @@ export default function UserProfile() {
   const initials = user.user_metadata?.full_name
     ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase()
     : user.email?.substring(0, 2).toUpperCase() || 'U'
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Sign out error:', error)
+      // Error boundary will catch this if it throws
+      throw new Error('Failed to sign out. Please try again.')
+    }
+  }
   
   return (
     <DropdownMenu>
@@ -55,8 +66,25 @@ export default function UserProfile() {
         <DropdownMenuItem asChild>
           <Link href="/profile">Profile</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={signOut}>Sign out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+export default function UserProfile() {
+  return (
+    <ErrorBoundary 
+      context="User Profile"
+      onError={(error, errorInfo) => {
+        console.error('User profile error:', {
+          error: error.message,
+          componentStack: errorInfo.componentStack,
+          timestamp: new Date().toISOString()
+        })
+      }}
+    >
+      <UserProfileContent />
+    </ErrorBoundary>
   )
 }

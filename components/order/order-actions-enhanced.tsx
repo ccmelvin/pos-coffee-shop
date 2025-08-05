@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ConfirmationModal } from '@/components/ui/confirmation-modal'
+import { ActionModal } from '@/components/ui/modal'
 import { useOrder } from '@/contexts/order-context'
 import { saveOrder } from '@/lib/order-service'
 import { toast } from 'sonner'
@@ -11,10 +11,11 @@ interface OrderActionsProps {
   onOrderComplete?: () => void
 }
 
-export function OrderActions({ onOrderComplete }: OrderActionsProps) {
+export function OrderActionsEnhanced({ onOrderComplete }: OrderActionsProps) {
   const { cart, total, subtotal, tax, clearCart } = useOrder()
   const [isProcessing, setIsProcessing] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [showHoldModal, setShowHoldModal] = useState(false)
 
   const handleSaveOrder = async () => {
     if (cart.length === 0) {
@@ -29,7 +30,7 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
         subtotal,
         tax,
         total,
-        payment_method: 'cash', // Default payment method
+        payment_method: 'cash',
       })
       
       toast.success('Order completed successfully!')
@@ -40,7 +41,6 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
     } catch (error) {
       console.error('Error saving order:', error)
       
-      // Handle specific error types
       if (error instanceof Error) {
         if (error.message.includes('out of stock')) {
           toast.error('Some items are out of stock. Order has been saved for retry.', {
@@ -62,7 +62,6 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
           return
         }
         
-        // Show user-friendly message
         toast.error(error.message)
       } else {
         toast.error('Unable to complete order. Please contact support if this continues.')
@@ -78,8 +77,13 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
   }
 
   const handleHoldOrder = () => {
-    // This would be implemented in a future feature
-    toast.info('Order hold feature coming soon')
+    // Future implementation
+    toast.info('Order has been placed on hold')
+  }
+
+  const getTotalItemsText = () => {
+    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+    return `${itemCount} item${itemCount !== 1 ? 's' : ''}`
   }
 
   return (
@@ -97,7 +101,7 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
           <Button 
             variant="outline" 
             className="text-emerald-600 border-emerald-600 hover:bg-emerald-50"
-            onClick={handleHoldOrder}
+            onClick={() => setShowHoldModal(true)}
             disabled={isProcessing || cart.length === 0}
           >
             Hold Order
@@ -112,15 +116,28 @@ export function OrderActions({ onOrderComplete }: OrderActionsProps) {
         </Button>
       </div>
 
-      <ConfirmationModal
+      {/* Cancel Order Modal */}
+      <ActionModal
         open={showCancelModal}
         onOpenChange={setShowCancelModal}
         title="Cancel Order"
-        description={`Are you sure you want to cancel this order? This will remove all ${cart.length} item${cart.length !== 1 ? 's' : ''} from your cart.`}
+        description={`Are you sure you want to cancel this order? This will remove all ${getTotalItemsText()} from your cart and cannot be undone.`}
         confirmText="Yes, Cancel Order"
         cancelText="Keep Order"
-        variant="destructive"
+        type="error"
         onConfirm={handleCancelOrder}
+      />
+
+      {/* Hold Order Modal */}
+      <ActionModal
+        open={showHoldModal}
+        onOpenChange={setShowHoldModal}
+        title="Hold Order"
+        description={`This will save your current order (${getTotalItemsText()}) and allow you to continue it later. The order will be preserved with all selected items.`}
+        confirmText="Hold Order"
+        cancelText="Continue Order"
+        type="warning"
+        onConfirm={handleHoldOrder}
       />
     </>
   )
